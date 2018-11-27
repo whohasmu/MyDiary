@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
         getFragmentManager().beginTransaction().replace(R.id.Frame_Main,new Frag_Home()).commit();
         passPushTokenToServer();
-        //commit1235
+        //commit1
     }
 
 
