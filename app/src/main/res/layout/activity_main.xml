@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:design="http://schemas.android.com/apk/res-auto"
+    tools:context=".MainActivity"
+    android:orientation="vertical"
+    >
+
+
+
+    <FrameLayout
+        android:id="@+id/Frame_Main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        >
+    </FrameLayout>
+
+
+
+    <android.support.design.widget.BottomNavigationView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="bottom"
+
+
+        android:id="@+id/nav_bot"
+        design:menu="@menu/menu_bottom"
+
+        app:itemTextColor="#ffffff"
+        app:itemIconTint="#ffffff"
+        app:itemBackground="@color/frag_textcolor"
+        >
+    </android.support.design.widget.BottomNavigationView>
+
+
+</LinearLayout>

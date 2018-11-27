@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- array의 이름은 location 입니다.-->
+
+    <string-array name="location2">
+        <item>최근 작성한 글</item>
+        <item>조회수가 많은 글</item>
+    </string-array>
+
+</resources>

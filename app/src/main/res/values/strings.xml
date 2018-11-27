@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Miniproject2</string>
+    <color name="frag_textcolor">#000000</color>
+    <string name="facebook_app_id">301348530692468</string>
+    <string name="fb_login_protocol_scheme">fb301348530692468</string>
+    <string name="titleA">titleA</string>
+    <string name="titleB">titleB</string>
+    <string name="demo_tab_no_title">No Title</string>
+
+</resources>
