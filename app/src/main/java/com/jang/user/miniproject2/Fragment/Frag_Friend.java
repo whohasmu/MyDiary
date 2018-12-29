@@ -3,6 +3,9 @@ package com.jang.user.miniproject2.Fragment;
 
 import android.app.Fragment;
 
+import android.content.res.ColorStateList;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,11 +17,13 @@ import android.support.v4.app.FragmentManager;
 
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.TintableImageSourceView;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toolbar;
 
 
@@ -43,52 +48,75 @@ public class Frag_Friend extends Fragment {
 
 
 
-
+    LayoutInflater tempInflater;
 
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frag_friend,container,false);
 
-
-
-        FragmentActivity activity = (FragmentActivity)getActivity();
-        ViewPager viewPager = (ViewPager) view.findViewById(R.id.viewPager);
-        TabLayout tabLayout = (TabLayout) view.findViewById(R.id.tabLayout);
-        MainTabAdapter mainTabAdapter = new MainTabAdapter(activity.getSupportFragmentManager());
-        mainTabAdapter.initFragment(getContext());
-        viewPager.setAdapter(mainTabAdapter);
-
-        tabLayout.setupWithViewPager(viewPager);
-
-
-
-
-
-
-
-
-
-
+        tempInflater = inflater;
 
 
 
         /* SmartTabLayout*/
-//        FragmentActivity activity = (FragmentActivity)getActivity();
-//
-//        FragmentPagerItemAdapter adapter = new FragmentPagerItemAdapter(
-//                activity.getSupportFragmentManager(), FragmentPagerItems.with(getContext())
-//                .add(R.string.titleA, temp1.class)
-//                .add(R.string.titleB, temp2.class)
-//                .add(R.string.titleA, temp3.class)
-//                .create());
-//
-//        ViewPager viewPager = (ViewPager) view.findViewById(R.id.Frame_Friend);
-//        viewPager.setAdapter(adapter);
-//
-//        SmartTabLayout viewPagerTab = (SmartTabLayout) view.findViewById(R.id.viewpagertab);
-//        viewPagerTab.setViewPager(viewPager);
+        FragmentActivity activity = (FragmentActivity)getActivity();
+
+        /*FragmentPagerItemAdapter adapter = new FragmentPagerItemAdapter(
+                activity.getSupportFragmentManager(), FragmentPagerItems.with(getContext())
+                .add("A", temp1.class)
+                .add("B", temp2.class)
+                .add("C" +
+                        "", temp3.class)
+                .create());*/
+
+        ViewPager viewPager = view.findViewById(R.id.Frame_Friend);
+        final SmartTabLayout viewPagerTab = view.findViewById(R.id.viewpagertab);
+
+        FragmentPagerItems pages = new FragmentPagerItems(getContext());
+        pages.add(FragmentPagerItem.of("AA",temp1.class));
+        pages.add(FragmentPagerItem.of("BB",temp2.class));
+        pages.add(FragmentPagerItem.of("CC",temp3.class));
+        FragmentPagerItemAdapter adapter = new FragmentPagerItemAdapter(activity.getSupportFragmentManager(),pages);
+
+
+        viewPager.setAdapter(adapter);
+
+
+        viewPagerTab.setBackgroundColor(getResources().getColor(R.color.black));
+        viewPagerTab.setCustomTabView(new SmartTabLayout.TabProvider() {
+            @Override
+            public View createTabView(ViewGroup container, int position, PagerAdapter adapter) {
+                ImageView icon = (ImageView) inflater.inflate(R.layout.custom_tab_icon2, container,false);
+                final Resources res = viewPagerTab.getContext().getResources();
+
+                switch (position) {
+                    case 0:
+                        res.getDrawable(R.drawable.people).setTint(Color.rgb(55,55,55)); //아이콘 색상 흰색이라서 임시로 까맣게 설정. 아이콘 새로 구해야함.
+                        icon.setImageDrawable(res.getDrawable(R.drawable.people));
+
+                        break;
+                    case 1:
+                        res.getDrawable(R.drawable.chatting).setTint(Color.rgb(55,55,55));
+                        icon.setImageDrawable(res.getDrawable(R.drawable.chatting));
+                        break;
+                    case 2:
+                        res.getDrawable(R.drawable.account).setTint(Color.rgb(55,55,55));
+                        icon.setImageDrawable(res.getDrawable(R.drawable.account));
+                        break;
+                    case 3:
+                        icon.setImageDrawable(res.getDrawable(R.drawable.ic_flash_on_white_24d));
+                        break;
+                    default:
+                        throw new IllegalStateException("Invalid position: " + position);
+                }
+                return icon;
+            }
+
+
+        });
+        viewPagerTab.setViewPager(viewPager);
 
 
 

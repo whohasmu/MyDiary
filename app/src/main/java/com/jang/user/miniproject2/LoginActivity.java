@@ -70,13 +70,14 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
         });
         if(mAuth.getCurrentUser()!=null){
             Log.d("로그","자동로그인");
+            Toast.makeText(LoginActivity.this," 자동로그인",Toast.LENGTH_SHORT).show();
             Intent signInIntent = mGoogleSignInClient.getSignInIntent();
             startActivityForResult(signInIntent, RC_SIGN_IN);
         }
 
 
         mCallbackManager = CallbackManager.Factory.create();
-        btn_facebook = findViewById(R.id.button_facebook_login);
+       /* btn_facebook = findViewById(R.id.button_facebook_login);
         btn_facebook.setReadPermissions("email", "public_profile");
         btn_facebook.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -98,7 +99,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                 Log.w("로그", error);
                 // ...
             }
-        });
+        });*/
 
     }
 
@@ -119,8 +120,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account);
             } catch (ApiException e) {
-                Log.d("로그", "onActivityResult catch");
+                Log.d("로그", "onActivityResult catch"+e.toString());
+                Toast.makeText(LoginActivity.this," 로그인 실패.",Toast.LENGTH_SHORT).show();
                 // Google Sign In failed, update UI appropriately
+
                
                 // ...
             }
@@ -128,6 +131,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
     }
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
 
+        Log.d("로그", "firebaseAuthWithGoogle:" + acct.getId());
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
