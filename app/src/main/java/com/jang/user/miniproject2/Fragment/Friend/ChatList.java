@@ -25,7 +25,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.jang.user.miniproject2.Chat.MessageActivity;
 import com.jang.user.miniproject2.Object.ChatModel;
-import com.jang.user.miniproject2.Object.LoginUser;
+import com.jang.user.miniproject2.Object.User;
 import com.jang.user.miniproject2.R;
 
 import java.text.SimpleDateFormat;
@@ -117,7 +117,7 @@ public class ChatList extends Fragment {
             FirebaseDatabase.getInstance().getReference().child("users").child(destinationUid).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    LoginUser loginUser = dataSnapshot.getValue(LoginUser.class);//상대방 유저 정보
+                    User loginUser = dataSnapshot.getValue(User.class);//상대방 유저 정보
 
                     Glide.with(customViewHolder.itemView.getContext())
                             .load(loginUser.getUser_uri())

@@ -19,6 +19,14 @@
 
     </com.google.android.gms.common.SignInButton>
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/Lottie_Login"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        />
+
     <!--<com.facebook.login.widget.LoginButton
         android:id="@+id/button_facebook_login"
         android:layout_width="wrap_content"

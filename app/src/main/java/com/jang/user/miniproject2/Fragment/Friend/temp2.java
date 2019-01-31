@@ -23,9 +23,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.jang.user.miniproject2.Chat.MessageActivity;
 import com.jang.user.miniproject2.Object.ChatModel;
-import com.jang.user.miniproject2.Object.LoginUser;
+import com.jang.user.miniproject2.Object.User;
 import com.jang.user.miniproject2.R;
-import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItem;
 
 
 import java.text.SimpleDateFormat;
@@ -75,13 +74,13 @@ public class temp2 extends Fragment {
         return view;
     }
 
-    @Override
+    /*@Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         int position = FragmentPagerItem.getPosition(getArguments());
 
 
-    }
+    }*/
 
 
     class ChatRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
@@ -139,7 +138,7 @@ public class temp2 extends Fragment {
             FirebaseDatabase.getInstance().getReference().child("users").child(destinationUid).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    LoginUser loginUser = dataSnapshot.getValue(LoginUser.class);//상대방 유저 정보
+                    User loginUser = dataSnapshot.getValue(User.class);//상대방 유저 정보
 
                     Glide.with(customViewHolder.itemView.getContext())
                             .load(loginUser.getUser_uri())
@@ -147,6 +146,7 @@ public class temp2 extends Fragment {
                             .into(customViewHolder.profile);
 
                     customViewHolder.message_title.setText(loginUser.getUser_name());
+                    /*customViewHolder.message_title.setText("꺅");*/
                 }
 
                 @Override

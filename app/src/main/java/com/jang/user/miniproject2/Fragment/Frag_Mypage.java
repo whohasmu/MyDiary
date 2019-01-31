@@ -1,6 +1,6 @@
 package com.jang.user.miniproject2.Fragment;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -12,13 +12,22 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.jang.user.miniproject2.Object.User;
 import com.jang.user.miniproject2.R;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by CYH on 2018-11-03.
@@ -27,26 +36,40 @@ import java.io.IOException;
 public class Frag_Mypage extends Fragment {
 
 
-    TextView txt_info;
+
     ImageView my_img;
-    TextView txt_name;
-    EditText et_name;
+    TextView Text_userName;
+    EditText Edit_userName;
+
+    Button Button_Save;
 
 
 
-
+    User user;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frag_mypage,container,false);
 
-        txt_info = view.findViewById(R.id.txt_info);
+
         my_img = view.findViewById(R.id.my_img);
-        txt_name = view.findViewById(R.id.txt_name);
-        et_name = view.findViewById(R.id.et_name);
+        Text_userName = view.findViewById(R.id.Text_userName);
+        Edit_userName = view.findViewById(R.id.Edit_userName);
+        Button_Save = view.findViewById(R.id.Button_Save);
 
+        FirebaseDatabase.getInstance().getReference().child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                user = dataSnapshot.getValue(User.class);
 
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
         /*Typeface typeface = getResources().getFont(R.font.gabia_bombaram);
         txt_info.setTypeface(typeface);
 
@@ -65,6 +88,16 @@ public class Frag_Mypage extends Fragment {
 
             }
         });
+
+        Button_Save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Map<String, Object> childUpdates = new HashMap<>();
+                childUpdates.put("/user_name",Edit_userName.getText().toString());
+                FirebaseDatabase.getInstance().getReference().child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).updateChildren(childUpdates);
+            }
+        });
+
 
         return view;
     }

@@ -1,6 +1,6 @@
 package com.jang.user.miniproject2.Fragment;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -97,14 +97,14 @@ public class Frag_Setting extends Fragment implements GoogleApiClient.OnConnecti
 
                 // 대화창 제목 설정
 
-                alert.setTitle("로그아웃");
+                /*alert.setTitle("로그아웃");*/
 
                 // 대화창 아이콘 설정
 //                alert.setIcon(R.drawable.check_dialog_64);
 
                 // 대화창 배경 색 설정
 
-                alert.getWindow().setBackgroundDrawable(new ColorDrawable(Color.argb(255,62,79,92)));
+                /*alert.getWindow().setBackgroundDrawable(new ColorDrawable(Color.argb(255,62,79,92)));*/
 
                 alert.show();
 

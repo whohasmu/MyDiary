@@ -33,7 +33,7 @@
             android:background="#66000000"
             android:gravity="center"
             android:maxLines="3"
-            android:text="아 배고프다"
+            android:text="제목"
             android:textColor="@android:color/white"
             android:textSize="15dp"/>
 
@@ -62,6 +62,7 @@
                 android:gravity="center"
                 android:singleLine="true"
                 android:text="40분전"
+                android:textSize="10dp"
                 android:textColor="@android:color/white"/>
 
             <TextView
@@ -74,6 +75,7 @@
                 android:layout_marginRight="4dp"
                 android:gravity="center_vertical"
                 android:text="41"
+                android:textSize="10dp"
                 android:textColor="@android:color/white"/>
 
             <ImageView
@@ -84,6 +86,7 @@
                 android:layout_toLeftOf="@+id/commentCount"
                 android:adjustViewBounds="true"
                 android:padding="2dp"
+                android:tint="#ffffff"
                 android:src="@drawable/chat"/>
         </RelativeLayout>
     </RelativeLayout>

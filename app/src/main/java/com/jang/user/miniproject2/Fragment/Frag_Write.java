@@ -1,10 +1,13 @@
 package com.jang.user.miniproject2.Fragment;
 
-import android.app.Fragment;
+import android.animation.Animator;
+import android.support.v4.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -24,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
 import com.firebase.client.Firebase;
 import com.google.android.gms.tasks.Continuation;
@@ -41,8 +45,10 @@ import com.jang.user.miniproject2.R;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import static android.app.Activity.RESULT_OK;
+import static android.view.View.GONE;
 import static android.widget.Toast.LENGTH_LONG;
 
 /**
@@ -54,9 +60,10 @@ public class Frag_Write extends Fragment {
 
 
     public static final  String FIREBASE_POST_URL = "https://miniproject2-4e7d3.firebaseio.com/Posts";
-    Button btn_return;
-    ImageView iv_camera;
-    Spinner wright_spinner;
+
+    ImageView Image_GetImage;
+    Button Button_LoadImage;
+    Spinner write_spinner;
 
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     Button Button_Write;
@@ -67,6 +74,8 @@ public class Frag_Write extends Fragment {
 
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     Uri downloadUri;
+    ProgressDialog asyncDialog;
+    LottieAnimationView Lottie_Write;
 
 
 
@@ -96,23 +105,34 @@ public class Frag_Write extends Fragment {
 
 
 
-        btn_return = view.findViewById(R.id.btn_return);
-        iv_camera = view.findViewById(R.id.iv_camera);
-        wright_spinner = view.findViewById(R.id.wright_spinner);
+
+        Image_GetImage = view.findViewById(R.id.Image_GetImage);
+        Button_LoadImage = view.findViewById(R.id.Button_LoadImage);
+        write_spinner = view.findViewById(R.id.write_spinner);
         Button_Write = view.findViewById(R.id.btn_write);
         Edit_Title = view.findViewById(R.id.et_title);
         Edit_Content = view.findViewById(R.id.et_content);
 
-        btn_return.setOnClickListener(new View.OnClickListener() {
+        Lottie_Write = view.findViewById(R.id.Lottie_Write);
+
+
+        /*
+        * 미구현
+        * */
+        write_spinner.setVisibility(GONE);
+
+
+        Button_LoadImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(i, 1);
             }
         });
 
-        iv_camera.setOnClickListener(new View.OnClickListener() {
+        Image_GetImage.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
                 Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(i, 1);
             }
@@ -123,7 +143,15 @@ public class Frag_Write extends Fragment {
         Button_Write.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                asyncDialog = new ProgressDialog(getContext());
+                asyncDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                asyncDialog.setMessage("일기 쓰는중..");
+                Log.d("로그","async 작성시작");
+                asyncDialog.show();
+
                 Button_Write.setEnabled(false);
+
                 FirebaseStorage firebaseStorage = FirebaseStorage.getInstance("gs://miniproject2-4e7d3.appspot.com");
                 StorageReference storageRef = firebaseStorage.getReference();
                 if(ImageUri != null ) {
@@ -183,17 +211,44 @@ public class Frag_Write extends Fragment {
                                 new Firebase(FIREBASE_POST_URL).push().setValue(post);
 
 
-                                getActivity().getFragmentManager().beginTransaction().replace(R.id.Frame_Main,new Frag_Home()).commit();
+                                /*getActivity().getFragmentManager().beginTransaction().replace(R.id.Frame_Main,new Frag_Home()).commit();*/
 
+                                Toast.makeText(getContext(), "일기 작성이 완료되었습니다.", LENGTH_LONG).show();
+
+                                asyncDialog.dismiss();
+                                Lottie_Write.setVisibility(View.VISIBLE);
+                                Lottie_Write.addAnimatorListener(new Animator.AnimatorListener() {
+                                    @Override
+                                    public void onAnimationStart(Animator animation) {
+
+                                    }
+
+                                    @Override
+                                    public void onAnimationEnd(Animator animation) {
+                                        Lottie_Write.cancelAnimation();
+                                        Lottie_Write.setVisibility(GONE);
+                                    }
+
+                                    @Override
+                                    public void onAnimationCancel(Animator animation) {
+
+                                    }
+
+                                    @Override
+                                    public void onAnimationRepeat(Animator animation) {
+
+                                    }
+                                });
+                                Lottie_Write.playAnimation();
                                 Button_Write.setEnabled(true);
 
 
                             } else {
                                 // Handle failures
                                 Log.d("로그", "이미지 링크 받아오기 실패...");
-                                Toast toast = Toast.makeText(getContext(), "업로드 실패..", LENGTH_LONG);
-                                toast.show();
+                                Toast.makeText(getContext(), "이미지 링크 받아오기 실패...", LENGTH_LONG).show();
 
+                                asyncDialog.dismiss();
                                 Button_Write.setEnabled(true);
                             }
                         }
@@ -204,6 +259,8 @@ public class Frag_Write extends Fragment {
 
             }//https://firebasestorage.googleapis.com/v0/b/miniproject2-4e7d3.appspot.com/o/images%2FIMG_20180918_060912.jpg?alt=media&token=32c80bf2-671c-4b47-8dee-881d8149a247
         });
+
+
 
 
 
@@ -218,14 +275,27 @@ public class Frag_Write extends Fragment {
             ImageUri = getPath(image);
 
             try {
+
+                //원본
                 /*Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), image);
                 iv_camera.setImageBitmap(bitmap);*/
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), Uri.parse(ImageUri));
+
+
+
+                //프레그먼트로 막힌방법
+                /*Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), Uri.parse(ImageUri));
                 iv_camera.setImageBitmap(bitmap);
 
-                Glide.with(this)
+                Glide.with(getActivity())
                         .load(image)
-                        .into(iv_camera);
+                        .into(iv_camera);*/
+
+                InputStream in = getContext().getContentResolver().openInputStream(data.getData());
+                Bitmap img = BitmapFactory.decodeStream(in);
+                in.close();
+                Image_GetImage.setVisibility(View.VISIBLE);
+                Button_LoadImage.setVisibility(View.INVISIBLE);
+                Image_GetImage.setImageBitmap(img);
 
 
             } catch (IOException e) {

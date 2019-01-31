@@ -1,11 +1,12 @@
 package com.jang.user.miniproject2.Fragment;
 
-import android.app.Fragment;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -73,6 +74,9 @@ public class Frag_Home extends Fragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinners.setAdapter(adapter);
 
+        //미구현
+        spinners.setVisibility(View.GONE);
+
 
 
 
@@ -84,8 +88,9 @@ public class Frag_Home extends Fragment {
         JodaTimeAndroid.init(inflater.getContext());
 
         mRecyclerView = view.findViewById(R.id.List_Post);
-        gridLayoutManager = new GridLayoutManager(inflater.getContext(),2,LinearLayoutManager.VERTICAL,true);
-        gridLayoutManager.setReverseLayout(true);
+        gridLayoutManager = new GridLayoutManager(inflater.getContext(),2,GridLayoutManager.VERTICAL,true);
+
+        /*gridLayoutManager.setReverseLayout(true);*/
         /*gridLayoutManager.setStackFromEnd(true);*/
         mRecyclerView.setLayoutManager(gridLayoutManager);
         mAdapter = new MyAdapter();
@@ -123,7 +128,7 @@ public class Frag_Home extends Fragment {
                         mKeys.add(nextIndex,key);
                     }
                 }
-                mAdapter.notifyDataSetChanged();
+                /*mAdapter.notifyDataSetChanged();*/
                 mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
                 //목록을 최신부분으로 이동
             }
@@ -137,8 +142,9 @@ public class Frag_Home extends Fragment {
 
 
 
-                mAdapter.notifyDataSetChanged();
-                mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
+                /*mAdapter.notifyDataSetChanged();*/
+
+                /*mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);*/
                 //목록을 최신부분으로 이동
 
             }
@@ -153,13 +159,14 @@ public class Frag_Home extends Fragment {
 
 
                 mAdapter.notifyDataSetChanged();
-                mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
+
+                /*mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);*/
                 //목록을 최신부분으로 이동
             }
 
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                String key = dataSnapshot.getKey();
+                /*String key = dataSnapshot.getKey();
                 Post newModel = dataSnapshot.getValue(Post.class);
                 int index = mKeys.indexOf(key);
                 mPosts.remove(index);
@@ -177,10 +184,10 @@ public class Frag_Home extends Fragment {
                         mPosts.add(nextIndex, newModel);
                         mKeys.add(nextIndex, key);
                     }
-                }
+                }*/
 
-                mAdapter.notifyDataSetChanged();
-                mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
+                /*mAdapter.notifyDataSetChanged();*/
+                /*mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);*/
                 //목록을 최신부분으로 이동
             }
 
@@ -226,14 +233,20 @@ public class Frag_Home extends Fragment {
         @Override
         public void onBindViewHolder(MyViewHolder holder, final int position) {
             final Post post = mPosts.get(position);
-            holder.text.setText(post.getTitle());
+            if(!post.getTitle().equals("")) {
+                holder.text.setText(" " + post.getTitle() + " ");
+            }else{
+                holder.text.setText(post.getTitle());
+            }
             holder.commentCount.setText("" + post.getCommentMap().size());
             holder.timeText.setText(getDiffTimeText(post.getWriteTime()));
-//            Glide.with(MainActivity.this).load(post.getImageUrl()).centerCrop().into(holder.background);
+            /*Glide.with(MainActivity.this).load(post.getImageUrl()).centerCrop().into(holder.background);*/
             Glide.with(getContext())
                     .load(post.getImageUrl())
                     .apply(new RequestOptions().centerCrop())
                     .into(holder.background);
+
+
             holder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

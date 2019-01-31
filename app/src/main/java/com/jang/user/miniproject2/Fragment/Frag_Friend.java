@@ -1,7 +1,7 @@
 package com.jang.user.miniproject2.Fragment;
 
 
-import android.app.Fragment;
+
 
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 
@@ -19,6 +20,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.TintableImageSourceView;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -49,40 +51,30 @@ public class Frag_Friend extends Fragment {
 
 
     LayoutInflater tempInflater;
-
-
+    SmartTabLayout viewPagerTab;
+    FragmentManager fragmentManager;
     @Nullable
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.frag_friend,container,false);
 
         tempInflater = inflater;
-
+        Log.d("로그","create");
 
 
         /* SmartTabLayout*/
         FragmentActivity activity = (FragmentActivity)getActivity();
-
-        /*FragmentPagerItemAdapter adapter = new FragmentPagerItemAdapter(
-                activity.getSupportFragmentManager(), FragmentPagerItems.with(getContext())
-                .add("A", temp1.class)
-                .add("B", temp2.class)
-                .add("C" +
-                        "", temp3.class)
-                .create());*/
-
+        fragmentManager = activity.getSupportFragmentManager();
         ViewPager viewPager = view.findViewById(R.id.Frame_Friend);
-        final SmartTabLayout viewPagerTab = view.findViewById(R.id.viewpagertab);
+        viewPagerTab = view.findViewById(R.id.viewpagertab);
 
         FragmentPagerItems pages = new FragmentPagerItems(getContext());
         pages.add(FragmentPagerItem.of("AA",temp1.class));
         pages.add(FragmentPagerItem.of("BB",temp2.class));
         pages.add(FragmentPagerItem.of("CC",temp3.class));
-        FragmentPagerItemAdapter adapter = new FragmentPagerItemAdapter(activity.getSupportFragmentManager(),pages);
-
-
+        FragmentPagerItemAdapter adapter = new FragmentPagerItemAdapter(fragmentManager,pages);
         viewPager.setAdapter(adapter);
-
 
         viewPagerTab.setBackgroundColor(getResources().getColor(R.color.black));
         viewPagerTab.setCustomTabView(new SmartTabLayout.TabProvider() {
@@ -93,9 +85,9 @@ public class Frag_Friend extends Fragment {
 
                 switch (position) {
                     case 0:
-                        res.getDrawable(R.drawable.people).setTint(Color.rgb(55,55,55)); //아이콘 색상 흰색이라서 임시로 까맣게 설정. 아이콘 새로 구해야함.
+                        //아이콘 색상 흰색이라서 임시로 까맣게 설정. 아이콘 새로 구해야함.
+                        res.getDrawable(R.drawable.people).setTint(Color.rgb(55,55,55));
                         icon.setImageDrawable(res.getDrawable(R.drawable.people));
-
                         break;
                     case 1:
                         res.getDrawable(R.drawable.chatting).setTint(Color.rgb(55,55,55));
@@ -230,9 +222,46 @@ public class Frag_Friend extends Fragment {
     }
 
 
+    @Override
+    public void onResume() {
+        Log.d("로그","Mresume");
+        super.onResume();
 
+    }
 
+    @Override
+    public void onPause() {
+        Log.d("로그","Mpause");
+        super.onPause();
+    }
 
+    @Override
+    public void onDestroyView() {
+        Log.d("로그","MdestroyView");
+        super.onDestroyView();
+    }
+    @Override
+    public void onDestroy() {
+        Log.d("로그","Mdestroy");
+        super.onDestroy();
+    }
+
+    @Override
+    public void onStart() {
+        if (fragmentManager.getBackStackEntryCount() > 0) {     // 이전화면 유지
+            fragmentManager.popBackStack();
+        } else {                                                // 화면 신규생성
+            super.onStart();
+        }
+
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+
+        super.onSaveInstanceState(outState);
+        outState.putInt("data",1);
+    }
 }
 
 

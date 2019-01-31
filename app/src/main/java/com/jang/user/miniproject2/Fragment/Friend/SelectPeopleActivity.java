@@ -27,7 +27,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.jang.user.miniproject2.Chat.MessageActivity;
 import com.jang.user.miniproject2.Object.ChatModel;
-import com.jang.user.miniproject2.Object.LoginUser;
+import com.jang.user.miniproject2.Object.User;
 import com.jang.user.miniproject2.R;
 
 import java.util.ArrayList;
@@ -65,7 +65,7 @@ public class SelectPeopleActivity extends AppCompatActivity {
     class PeopleSelectREcycleViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        List<LoginUser> users;
+        List<User> users;
         public PeopleSelectREcycleViewAdapter() {
             users = new ArrayList<>();
             FirebaseDatabase.getInstance().getReference().child("users").addValueEventListener(new ValueEventListener() {
@@ -77,9 +77,9 @@ public class SelectPeopleActivity extends AppCompatActivity {
 
                     for(DataSnapshot snapshot : dataSnapshot.getChildren()){
 
-                        LoginUser user  = snapshot.getValue(LoginUser.class);
+                        User user  = snapshot.getValue(User.class);
 
-                        if (user.getUserId().equals(myUid)){
+                        if (user.getUid().equals(myUid)){
                             continue;
                         }
                         users.add(user);
@@ -126,7 +126,7 @@ public class SelectPeopleActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(view.getContext(), MessageActivity.class);
-                    intent.putExtra("destinationUid",users.get(position).getUserId());
+                    intent.putExtra("destinationUid",users.get(position).getUid());
                     ActivityOptions activityOptions = null;
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
                         activityOptions = ActivityOptions.makeCustomAnimation(view.getContext(),R.anim.from_right,R.anim.to_left);
@@ -135,15 +135,15 @@ public class SelectPeopleActivity extends AppCompatActivity {
 
                 }
             });
-            if (users.get(position).comment != null) {
-                ((CustomViewHolder) holder).commentText.setText(users.get(position).comment);
+            if (users.get(position).getStatusMessage() != null) {
+                ((CustomViewHolder) holder).commentText.setText(users.get(position).getStatusMessage());
             }
             ((CustomViewHolder) holder).select_check.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     //체크가 되어있는 상태
                     if (b){
-                        chatModel.users.put(users.get(position).userId,true);
+                        chatModel.users.put(users.get(position).getUid(),true);
 
                     }else{
                         chatModel.users.remove(users.get(position));

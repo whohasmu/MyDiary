@@ -29,7 +29,7 @@ import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.jang.user.miniproject2.Object.ChatModel;
-import com.jang.user.miniproject2.Object.LoginUser;
+import com.jang.user.miniproject2.Object.User;
 import com.jang.user.miniproject2.Object.NotificationModel;
 import com.jang.user.miniproject2.R;
 
@@ -53,7 +53,7 @@ import okhttp3.Response;
 public class GroupMessageActivity extends AppCompatActivity {
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm");
 
-    Map<String,LoginUser> users = new HashMap<>();
+    Map<String,User> users = new HashMap<>();
     String destinationRoom;
     String uid;
     EditText groupMessageAct_et;
@@ -76,7 +76,7 @@ public class GroupMessageActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot item : dataSnapshot.getChildren()){
-                    users.put(item.getKey(),item.getValue(LoginUser.class));
+                    users.put(item.getKey(),item.getValue(User.class));
 
                 }
                 init();

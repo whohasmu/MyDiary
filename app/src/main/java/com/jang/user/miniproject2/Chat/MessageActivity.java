@@ -29,7 +29,7 @@ import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.jang.user.miniproject2.Object.ChatModel;
-import com.jang.user.miniproject2.Object.LoginUser;
+import com.jang.user.miniproject2.Object.User;
 import com.jang.user.miniproject2.Object.NotificationModel;
 import com.jang.user.miniproject2.R;
 
@@ -63,7 +63,7 @@ public class MessageActivity extends AppCompatActivity {
 
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm");
 
-    private LoginUser loginUser;
+    private User loginUser;
 
     private DatabaseReference databaseReference;
     private ValueEventListener valueEventListener;
@@ -183,7 +183,7 @@ public class MessageActivity extends AppCompatActivity {
             FirebaseDatabase.getInstance().getReference().child("users").child(destinationUid).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    loginUser = dataSnapshot.getValue(LoginUser.class);
+                    loginUser = dataSnapshot.getValue(User.class);
                     getMessageList();
                 }
 

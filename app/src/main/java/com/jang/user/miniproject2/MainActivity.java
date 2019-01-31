@@ -2,6 +2,7 @@ package com.jang.user.miniproject2;
 
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -23,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
+    FragmentManager fragmentManager;
 
 
 
@@ -35,12 +36,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        BottomNavigationView nav_bot = (BottomNavigationView)findViewById(R.id.nav_bot);
+        BottomNavigationView nav_bot = findViewById(R.id.nav_bot);
         nav_bot.setOnNavigationItemSelectedListener(navigationListener);
 
+        fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.Frame_Main,new Frag_Home()).commit();
 
-        getFragmentManager().beginTransaction().replace(R.id.Frame_Main,new Frag_Home()).commit();
-        passPushTokenToServer();
         //commit1234
     }
 
@@ -51,19 +52,21 @@ public class MainActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.action_bottom_navigation_menu1:
-                    getFragmentManager().beginTransaction().replace(R.id.Frame_Main,new Frag_Home()).commit();
+                    fragmentManager.beginTransaction().replace(R.id.Frame_Main,new Frag_Home()).commit();
+                    fragmentManager.beginTransaction().addToBackStack(null);
                     return true;
                 case R.id.action_bottom_navigation_menu2:
-                    getFragmentManager().beginTransaction().replace(R.id.Frame_Main,new Frag_Friend()).commit();
+                    fragmentManager.beginTransaction().replace(R.id.Frame_Main, new Frag_Friend()).commit();
+                    fragmentManager.beginTransaction().addToBackStack(null);
                     return true;
                 case R.id.action_bottom_navigation_menu3:
-                    getFragmentManager().beginTransaction().replace(R.id.Frame_Main,new Frag_Write()).commit();
+                    fragmentManager.beginTransaction().replace(R.id.Frame_Main,new Frag_Write()).commit();
                     return true;
                 case R.id.action_bottom_navigation_menu4:
-                    getFragmentManager().beginTransaction().replace(R.id.Frame_Main,new Frag_Mypage()).commit();
+                    fragmentManager.beginTransaction().replace(R.id.Frame_Main,new Frag_Mypage()).commit();
                     return true;
                 case R.id.action_bottom_navigation_menu5:
-                    getFragmentManager().beginTransaction().replace(R.id.Frame_Main,new Frag_Setting()).commit();
+                    fragmentManager.beginTransaction().replace(R.id.Frame_Main,new Frag_Setting()).commit();
                     return true;
             }
             return false;
@@ -74,15 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    void passPushTokenToServer(){
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        String token = FirebaseInstanceId.getInstance().getToken();
-        Map<String,Object> map = new HashMap<>();
-        map.put("pushToken",token);
 
-        FirebaseDatabase.getInstance().getReference().child("users").child(uid).updateChildren(map);
-
-    }
 
 
 }

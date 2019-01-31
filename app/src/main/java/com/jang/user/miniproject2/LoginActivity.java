@@ -7,11 +7,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.facebook.AccessToken;
+import com.airbnb.lottie.LottieAnimationView;
 import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.login.LoginResult;
+import com.facebook.login.Login;
 import com.facebook.login.widget.LoginButton;
 import com.firebase.client.Firebase;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -24,13 +22,19 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.jang.user.miniproject2.Object.LoginUser;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.jang.user.miniproject2.Object.User;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener{
     private static final int RC_SIGN_IN = 10;
@@ -40,13 +44,21 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
     private CallbackManager mCallbackManager;
     LoginButton btn_facebook;
     private DatabaseReference mDatabase;
+    LottieAnimationView Lottie_Login;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         btn_google = findViewById(R.id.btn_google);
-        Log.d("jsb", "onCreate");
+        Lottie_Login = findViewById(R.id.Lottie_Login);
+        Lottie_Login.setAnimation("Login.json");
+        Lottie_Login.loop(true);
+
+
+
         Firebase.setAndroidContext(this);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -62,17 +74,21 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
         btn_google.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("로그" , "로그인테스트");
+
                 Intent signInIntent = mGoogleSignInClient.getSignInIntent();
                 startActivityForResult(signInIntent, RC_SIGN_IN);
+
 
             }
         });
         if(mAuth.getCurrentUser()!=null){
-            Log.d("로그","자동로그인");
-            Toast.makeText(LoginActivity.this," 자동로그인",Toast.LENGTH_SHORT).show();
+            /*Log.d("로그","자동로그인");
+            Toast.makeText(LoginActivity.this," 자동로그인",Toast.LENGTH_SHORT).show();*/
             Intent signInIntent = mGoogleSignInClient.getSignInIntent();
             startActivityForResult(signInIntent, RC_SIGN_IN);
+
+            /*Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+            startActivity(intent);*/
         }
 
 
@@ -108,20 +124,25 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
         Log.d("로그", "onActivityResult");
+        Lottie_Login.setVisibility(View.VISIBLE);
+        Lottie_Login.playAnimation();
+
+
 
 
         if (requestCode == RC_SIGN_IN) {
-            Log.d("로그", "onActivityResult if");
+
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
 
             try {
-                Log.d("로그", "onActivityResult try");
+
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account);
+
             } catch (ApiException e) {
                 Log.d("로그", "onActivityResult catch"+e.toString());
-                Toast.makeText(LoginActivity.this," 로그인 실패.",Toast.LENGTH_SHORT).show();
+
                 // Google Sign In failed, update UI appropriately
 
                
@@ -142,23 +163,127 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                         Toast.makeText(LoginActivity.this,"성공적으로 로그인 되었습니다.",Toast.LENGTH_SHORT).show();
 
 
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            LoginUser loginUser = new LoginUser(user.getUid(),user.getPhotoUrl().toString(),user.getDisplayName());
+                            final FirebaseUser LoginUser = mAuth.getCurrentUser();
 
-                            mDatabase.child("users").child(user.getUid()).setValue(loginUser);
+                            /*mDatabase.child("user").child(LoginUser.getUid()).equalTo(LoginUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                            Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+                                    if(dataSnapshot.exists()) {
+                                        Log.d("로그","기존회원");
+                                        User loginUser = new User(LoginUser.getUid(), LoginUser.getPhotoUrl().toString(), LoginUser.getDisplayName());
+                                        *//*mDatabase.child("users").child(LoginUser.getUid()).setValue(loginUser);*//**//*
+                                       /* mDatabase.child("users").child(LoginUser.getUid()).child("google_uri").setValue(loginUser.getGoogle_uri());
+                                        mDatabase.child("users").child(LoginUser.getUid()).child("google_name").setValue(loginUser.getGoogle_name());*//*
+
+                                        //기존회원
+
+
+
+
+
+
+                                        String token = FirebaseInstanceId.getInstance().getToken();
+                                        Map<String,Object> map = new HashMap<>();
+                                        map.put("pushToken",token);
+                                        map.put("google_uri",loginUser.getGoogle_uri());
+                                        map.put("google_name",loginUser.getGoogle_name());
+
+                                        FirebaseDatabase.getInstance().getReference().child("users").child(LoginUser.getUid()).updateChildren(map);
+
+
+                                    }else {
+
+
+                                        Log.d("로그","새로운 가입");
+                                        //String UId, String google_uri, String user_uri, String google_name, String user_name
+                                        String token = FirebaseInstanceId.getInstance().getToken();
+                                        User loginUser = new User(LoginUser.getUid(), LoginUser.getPhotoUrl().toString(), LoginUser.getPhotoUrl().toString(), LoginUser.getDisplayName(), LoginUser.getDisplayName(),token);
+                                        mDatabase.child("users").child(LoginUser.getUid()).setValue(loginUser);
+
+                                        //최초로그인(회원가입)
+                                        //기초정보로 google계정으로부터 이름과 프로필사진 가져옴
+
+
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });*/
+
+
+                            mDatabase.child("users").child(LoginUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if(dataSnapshot.exists()) {
+                                        Log.d("로그","기존회원");
+                                        User loginUser = new User(LoginUser.getUid(), LoginUser.getPhotoUrl().toString(), LoginUser.getDisplayName());
+                                        mDatabase.child("users").child(LoginUser.getUid()).setValue(loginUser);
+                                        mDatabase.child("users").child(LoginUser.getUid()).child("google_uri").setValue(loginUser.getGoogle_uri());
+                                        mDatabase.child("users").child(LoginUser.getUid()).child("google_name").setValue(loginUser.getGoogle_name());
+
+                                        //기존회원
+
+
+
+
+
+
+                                        String token = FirebaseInstanceId.getInstance().getToken();
+                                        Map<String,Object> map = new HashMap<>();
+                                        map.put("pushToken",token);
+                                        map.put("google_uri",loginUser.getGoogle_uri());
+                                        map.put("google_name",loginUser.getGoogle_name());
+
+                                        FirebaseDatabase.getInstance().getReference().child("users").child(LoginUser.getUid()).updateChildren(map);
+
+
+                                    }else {
+
+
+                                        Log.d("로그","새로운 가입");
+                                        //String UId, String google_uri, String user_uri, String google_name, String user_name
+                                        String token = FirebaseInstanceId.getInstance().getToken();
+                                        User loginUser = new User(LoginUser.getUid(), LoginUser.getPhotoUrl().toString(), LoginUser.getPhotoUrl().toString(), LoginUser.getDisplayName(), LoginUser.getDisplayName(),token);
+                                        mDatabase.child("users").child(LoginUser.getUid()).setValue(loginUser);
+
+                                        //최초로그인(회원가입)
+                                        //기초정보로 google계정으로부터 이름과 프로필사진 가져옴
+
+
+                                    }
+
+
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+
+
+
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(intent);
+                            Lottie_Login.setVisibility(View.GONE);
+                            Lottie_Login.cancelAnimation();
 
                             finish();
                         } else {
-                            Toast.makeText(LoginActivity.this," 로그인 실패.",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this," 로그인 실패...",Toast.LENGTH_SHORT).show();
+                            Lottie_Login.setVisibility(View.GONE);
+                            Lottie_Login.cancelAnimation();
                         }
 
                     }
                 });
     }
-    private void handleFacebookAccessToken(AccessToken token) {
+
+    /*private void handleFacebookAccessToken(AccessToken token) {
 
         showProgressDialog();
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
@@ -180,7 +305,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                         }
                     }
                 });
-    }
+    }*/
 
     @Override
     public void onClick(View v) {

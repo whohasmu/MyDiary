@@ -25,7 +25,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.jang.user.miniproject2.Chat.MessageActivity;
-import com.jang.user.miniproject2.Object.LoginUser;
+import com.jang.user.miniproject2.Object.User;
 import com.jang.user.miniproject2.R;
 
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ import java.util.List;
 public class PeopleFragment extends Fragment {
 
     FloatingActionButton floatingActionButton;
-    private ArrayList<LoginUser> mUser = new ArrayList<>();
+    private ArrayList<User> mUser = new ArrayList<>();
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -57,7 +57,7 @@ public class PeopleFragment extends Fragment {
     class PeopleFragmentREcycleViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        List<LoginUser> users;
+        List<User> users;
         public PeopleFragmentREcycleViewAdapter() {
             users = new ArrayList<>();
             FirebaseDatabase.getInstance().getReference().child("users").addValueEventListener(new ValueEventListener() {
@@ -69,9 +69,9 @@ public class PeopleFragment extends Fragment {
 
                     for(DataSnapshot snapshot : dataSnapshot.getChildren()){
 
-                        LoginUser user  = snapshot.getValue(LoginUser.class);
+                        User user  = snapshot.getValue(User.class);
 
-                        if (user.getUserId().equals(myUid)){
+                        if (user.getUid().equals(myUid)){
                             continue;
                         }
                         users.add(user);
@@ -118,7 +118,7 @@ public class PeopleFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(view.getContext(), MessageActivity.class);
-                    intent.putExtra("destinationUid",users.get(position).getUserId());
+                    intent.putExtra("destinationUid",users.get(position).getUid());
                     ActivityOptions activityOptions = null;
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
                         activityOptions = ActivityOptions.makeCustomAnimation(view.getContext(),R.anim.from_right,R.anim.to_left);
@@ -127,8 +127,8 @@ public class PeopleFragment extends Fragment {
 
                 }
             });
-            if (users.get(position).comment != null) {
-                ((CustomViewHolder) holder).commentText.setText(users.get(position).comment);
+            if (users.get(position).getStatusMessage() != null) {
+                ((CustomViewHolder) holder).commentText.setText(users.get(position).getStatusMessage());
             }
         }
 
