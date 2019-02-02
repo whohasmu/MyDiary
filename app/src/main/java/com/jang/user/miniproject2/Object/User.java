@@ -1,6 +1,7 @@
 package com.jang.user.miniproject2.Object;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class User {
 
@@ -11,7 +12,7 @@ public class User {
     public String user_name;
     public String pushToken;
     public String statusMessage;
-    public ArrayList<String> friendUID;
+    public HashMap<String,Object> friendUID;
 
 
     public User() {
@@ -33,7 +34,7 @@ public class User {
         this.pushToken = pushToken;
     }
 
-    public User(String uid, String google_uri, String user_uri, String google_name, String user_name, String pushToken, String statusMessage, ArrayList<String> friendUID) {
+    public User(String uid, String google_uri, String user_uri, String google_name, String user_name, String pushToken, String statusMessage, HashMap<String,Object> friendUID) {
         this.uid = uid;
         this.google_uri = google_uri;
         this.user_uri = user_uri;
@@ -108,11 +109,11 @@ public class User {
         this.statusMessage = statusMessage;
     }
 
-    public ArrayList<String> getFriendUID() {
+    public HashMap<String,Object> getFriendUID() {
         return friendUID;
     }
 
-    public void setFriendUID(ArrayList<String> friendUID) {
+    public void setFriendUID(HashMap<String,Object> friendUID) {
         this.friendUID = friendUID;
     }
 }

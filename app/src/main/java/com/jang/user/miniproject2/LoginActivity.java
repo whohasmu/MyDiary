@@ -220,26 +220,30 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     if(dataSnapshot.exists()) {
                                         Log.d("로그","기존회원");
-                                        User loginUser = new User(LoginUser.getUid(), LoginUser.getPhotoUrl().toString(), LoginUser.getDisplayName());
-                                        mDatabase.child("users").child(LoginUser.getUid()).setValue(loginUser);
-                                        mDatabase.child("users").child(LoginUser.getUid()).child("google_uri").setValue(loginUser.getGoogle_uri());
-                                        mDatabase.child("users").child(LoginUser.getUid()).child("google_name").setValue(loginUser.getGoogle_name());
+
 
                                         //기존회원
 
 
 
 
+                                        User loginUser = new User(LoginUser.getUid(), LoginUser.getPhotoUrl().toString(), LoginUser.getDisplayName());
 
 
                                         String token = FirebaseInstanceId.getInstance().getToken();
-                                        Map<String,Object> map = new HashMap<>();
+
+
+                                        FirebaseDatabase.getInstance().getReference().child("users").child(LoginUser.getUid()).child("pushToken").setValue(token);
+                                        FirebaseDatabase.getInstance().getReference().child("users").child(LoginUser.getUid()).child("uid").setValue(loginUser.getUid());
+                                        FirebaseDatabase.getInstance().getReference().child("users").child(LoginUser.getUid()).child("google_uri").setValue(loginUser.getGoogle_uri());
+                                        FirebaseDatabase.getInstance().getReference().child("users").child(LoginUser.getUid()).child("google_name").setValue(loginUser.getGoogle_name());
+
+                                        /*Map<String,Object> map = new HashMap<>();
                                         map.put("pushToken",token);
                                         map.put("google_uri",loginUser.getGoogle_uri());
                                         map.put("google_name",loginUser.getGoogle_name());
 
-                                        FirebaseDatabase.getInstance().getReference().child("users").child(LoginUser.getUid()).updateChildren(map);
-
+                                        FirebaseDatabase.getInstance().getReference().child("users").child(LoginUser.getUid()).updateChildren(map);*/
 
                                     }else {
 

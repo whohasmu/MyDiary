@@ -3,6 +3,8 @@ package com.jang.user.miniproject2.Fragment;
 
 
 
+import android.app.ActivityOptions;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -11,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -20,19 +23,33 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.TintableImageSourceView;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toolbar;
 
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.jang.user.miniproject2.Chat.MessageActivity;
+import com.jang.user.miniproject2.Fragment.Friend.SelectPeopleActivity;
 import com.jang.user.miniproject2.Fragment.Friend.ViewPagerAdapter;
 import com.jang.user.miniproject2.Fragment.Friend.temp1;
 import com.jang.user.miniproject2.Fragment.Friend.temp2;
 import com.jang.user.miniproject2.Fragment.Friend.temp3;
+import com.jang.user.miniproject2.Object.ChatModel;
+import com.jang.user.miniproject2.Object.User;
 import com.jang.user.miniproject2.R;
 import com.jang.user.miniproject2.Temp.MainTabAdapter;
 import com.jang.user.miniproject2.Temp.TabPagerAdapter;
@@ -40,6 +57,15 @@ import com.ogaclejapan.smarttablayout.SmartTabLayout;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItem;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItemAdapter;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItems;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
+import java.util.TreeMap;
 
 
 /**
@@ -50,20 +76,58 @@ public class Frag_Friend extends Fragment {
 
 
 
-    LayoutInflater tempInflater;
-    SmartTabLayout viewPagerTab;
-    FragmentManager fragmentManager;
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd hh:mm");
+
+    RecyclerView recyclerView;
+    ChatRecyclerViewAdapter chatRecyclerViewAdapter;
+    FloatingActionButton Button_Chat;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.frag_friend,container,false);
+        View view = inflater.inflate(R.layout.fragment_chat, container, false);
 
+
+
+
+
+
+
+
+        recyclerView = view.findViewById(R.id.List_chat);
+        chatRecyclerViewAdapter = new ChatRecyclerViewAdapter();
+        recyclerView.setAdapter(chatRecyclerViewAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
+
+
+
+        Button_Chat = view.findViewById(R.id.Button_Chat);
+        Button_Chat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(view.getContext(),SelectPeopleActivity.class));
+            }
+        });
+
+    /*@Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        int position = FragmentPagerItem.getPosition(getArguments());
+
+
+    }*/
+
+
+
+
+
+        /*
         tempInflater = inflater;
         Log.d("로그","create");
 
 
-        /* SmartTabLayout*/
+        *//* SmartTabLayout*//*
         FragmentActivity activity = (FragmentActivity)getActivity();
         fragmentManager = activity.getSupportFragmentManager();
         ViewPager viewPager = view.findViewById(R.id.Frame_Friend);
@@ -108,7 +172,7 @@ public class Frag_Friend extends Fragment {
 
 
         });
-        viewPagerTab.setViewPager(viewPager);
+        viewPagerTab.setViewPager(viewPager);*/
 
 
 
@@ -221,6 +285,144 @@ public class Frag_Friend extends Fragment {
         return view;
     }
 
+    class ChatRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+
+        private String userUid;
+        private List<ChatModel> chatModels = new ArrayList<>();
+        private List<String> keys = new ArrayList<>();
+        private ArrayList<String> destinationUsers = new ArrayList<>();
+
+        public ChatRecyclerViewAdapter() {
+            userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            FirebaseDatabase.getInstance().getReference().child("chatrooms").orderByChild("users/"+userUid).equalTo(true).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    chatModels.clear();
+                    keys.clear();
+                    for(DataSnapshot item : dataSnapshot.getChildren()){
+                        chatModels.add(item.getValue(ChatModel.class));
+                        keys.add(item.getKey());
+
+                    }
+                    notifyDataSetChanged();
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
+
+        @NonNull
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chat,parent,false);
+
+            return new CustomViewHolder(view);
+
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
+
+            final CustomViewHolder customViewHolder = (ChatRecyclerViewAdapter.CustomViewHolder)holder;
+            String destinationUid = null;
+            // 일일 채팅방에 있는 유저 체크!!!
+            for (String user: chatModels.get(position).users.keySet()){
+                if (!user.equals(userUid)){
+                    destinationUid = user;
+                    destinationUsers.add(destinationUid);
+                }
+
+            }
+
+            FirebaseDatabase.getInstance().getReference().child("users").child(destinationUid).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    User loginUser = dataSnapshot.getValue(User.class);//상대방 유저 정보
+
+                    Glide.with(customViewHolder.itemView.getContext())
+                            .load(loginUser.getUser_uri())
+                            .apply(new RequestOptions().circleCrop())
+                            .into(customViewHolder.profile);
+
+                    customViewHolder.message_title.setText(loginUser.getUser_name());
+                    /*customViewHolder.message_title.setText("꺅");*/
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+
+            //메시지를 내림차순으로 정렬
+
+            Map<String,ChatModel.Comment> commentMap = new TreeMap<>(Collections.reverseOrder());
+
+            commentMap.putAll(chatModels.get(position).comments);
+            if (commentMap.keySet().toArray().length > 0) {
+                String lastMessagekey = (String) commentMap.keySet().toArray()[0];
+                customViewHolder.lastMessage.setText(chatModels.get(position).comments.get(lastMessagekey).message);
+
+
+                //마지막 시간
+                simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+                long unixTime = (long) chatModels.get(position).comments.get(lastMessagekey).timestamp;
+                Date date = new Date(unixTime);
+                customViewHolder.messageTimestamp.setText(simpleDateFormat.format(date));
+
+            }
+
+
+
+
+
+            customViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = null;
+                    /*if (chatModels.get(position).users.size() > 2){
+                        intent = new Intent(view.getContext(), GroupMessageActivity.class);
+                        intent.putExtra("destinationRoom",keys.get(position));
+                    }else {
+                        intent = new Intent(view.getContext(), MessageActivity.class);
+                        intent.putExtra("destinationUid", destinationUsers.get(position));
+                    }*/
+
+                    intent = new Intent(view.getContext(), MessageActivity.class);
+                    intent.putExtra("destinationUid", destinationUsers.get(position));
+
+                    ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(view.getContext(), R.anim.from_right, R.anim.to_left);
+
+                    startActivity(intent, activityOptions.toBundle());
+                }
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return chatModels.size();
+        }
+
+        private class CustomViewHolder extends RecyclerView.ViewHolder {
+            public ImageView profile;
+            public TextView message_title;
+            public TextView lastMessage;
+            public TextView messageTimestamp;
+
+            public CustomViewHolder(View view) {
+                super(view);
+                profile = view.findViewById(R.id.Image_Profile);
+                message_title = view.findViewById(R.id.Text_Title);
+                lastMessage = view.findViewById(R.id.chatItem_lastmessage);
+                messageTimestamp = view.findViewById(R.id.chatItem_timestamp);
+            }
+        }
+    }
+
 
     @Override
     public void onResume() {
@@ -246,7 +448,7 @@ public class Frag_Friend extends Fragment {
         super.onDestroy();
     }
 
-    @Override
+    /*@Override
     public void onStart() {
         if (fragmentManager.getBackStackEntryCount() > 0) {     // 이전화면 유지
             fragmentManager.popBackStack();
@@ -261,7 +463,7 @@ public class Frag_Friend extends Fragment {
 
         super.onSaveInstanceState(outState);
         outState.putInt("data",1);
-    }
+    }*/
 }
 
 

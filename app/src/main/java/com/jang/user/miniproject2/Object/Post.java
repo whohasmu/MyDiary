@@ -6,7 +6,6 @@ import java.util.Map;
 
 public class Post implements Serializable {
     String writerUID;
-    String writerName;
     String title;
     String content;
     String imageUrl;
@@ -17,9 +16,8 @@ public class Post implements Serializable {
     public Post() {
     }
 
-    public Post(String writerUID, String writerName, String title,String content, String imageUrl, long writeTime, Map<String, Comment> commentMap) {
+    public Post(String writerUID, String title,String content, String imageUrl, long writeTime, Map<String, Comment> commentMap) {
         this.writerUID = writerUID;
-        this.writerName = writerName;
         this.title = title;
         this.content = content;
         this.imageUrl = imageUrl;
@@ -33,14 +31,6 @@ public class Post implements Serializable {
 
     public void setWriterUID(String writerUID) {
         this.writerUID = writerUID;
-    }
-
-    public String getWriterName() {
-        return writerName;
-    }
-
-    public void setWriterName(String writerName) {
-        this.writerName = writerName;
     }
 
     public String getTitle() {

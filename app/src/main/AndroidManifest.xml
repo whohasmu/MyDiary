@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.jang.user.miniproject2"
-    android:versionCode="5"
-    android:versionName="1.04">
+    package="com.jang.user.miniproject2">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -58,7 +56,8 @@
         </service>
         -->
         <activity android:name=".Fragment.Friend.SelectPeopleActivity" />
-        <activity android:name=".Chat.GroupMessageActivity"></activity>
+        <activity android:name=".Chat.GroupMessageActivity" />
+        <activity android:name=".Temp.ImageFullActivity"></activity>
     </application>
 
 </manifest>

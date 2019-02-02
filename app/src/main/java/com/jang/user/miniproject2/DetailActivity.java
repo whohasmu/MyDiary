@@ -2,6 +2,7 @@ package com.jang.user.miniproject2;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
@@ -24,7 +25,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.jang.user.miniproject2.Object.User;
 import com.jang.user.miniproject2.Object.Post;
+import com.jang.user.miniproject2.Temp.ImageFullActivity;
 
+import java.util.HashMap;
 
 
 public class DetailActivity extends AppCompatActivity {
@@ -120,6 +123,9 @@ public class DetailActivity extends AppCompatActivity {
             }
         });
 
+
+
+
         Button_AddFriend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -134,7 +140,7 @@ public class DetailActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int id) {
 
                         FirebaseDatabase.getInstance().getReference().child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("friendUID").child(mPost.getWriterUID()).setValue(mPost.getWriterUID());
-                        finish();
+
 
 
 
@@ -157,13 +163,21 @@ public class DetailActivity extends AppCompatActivity {
         final Activity activity = this;
 
 
-
+        mCardImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(),ImageFullActivity.class);
+                intent.putExtra("ImageUri",mPost.getImageUrl());
+                startActivity(intent);
+            }
+        });
 
 
 
         FirebaseDatabase.getInstance().getReference().child("users").child(mPost.getWriterUID()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
 
                 User user  = dataSnapshot.getValue(User.class);
 
@@ -208,6 +222,7 @@ public class DetailActivity extends AppCompatActivity {
                 Log.d("로그","로그 : " + databaseError.toString());
             }
         });
+
 
 
 

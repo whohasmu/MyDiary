@@ -1,4 +1,5 @@
 package com.jang.user.miniproject2.Chat;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -78,6 +79,10 @@ public class MessageActivity extends AppCompatActivity {
         et_chat = findViewById(R.id.et_chat);
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         destinationUid = getIntent().getStringExtra("destinationUid");
+
+        Log.d("로그","메세지엑티비티");
+        Log.d("로그","myUID : " + userId);
+        Log.d("로그","DestinationUID : " + destinationUid );
 
 
 

@@ -7,34 +7,41 @@
     xmlns:design="http://schemas.android.com/apk/res-auto"
     tools:context=".MainActivity"
     android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
     >
 
 
     <android.support.design.widget.CoordinatorLayout
         android:layout_height="match_parent"
-        android:layout_width="match_parent">
-    <FrameLayout
-        android:id="@+id/Frame_Main"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        >
-    </FrameLayout>
-
-
-
-    <android.support.design.widget.BottomNavigationView
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_gravity="bottom"
-        android:id="@+id/nav_bot"
-        design:menu="@menu/menu_bottom"
-        app:itemTextColor="#ffffff"
-        app:itemIconTint="#ffffff"
-        app:itemBackground="@color/frag_textcolor"
 
         >
-    </android.support.design.widget.BottomNavigationView>
+
+            <FrameLayout
+                android:id="@+id/Frame_Main"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="50dp"
+
+
+                >
+            </FrameLayout>
+
+
+
+            <android.support.design.widget.BottomNavigationView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="bottom"
+                android:id="@+id/nav_bot"
+                design:menu="@menu/menu_bottom"
+                app:itemTextColor="#ffffff"
+                app:itemIconTint="#ffffff"
+                app:itemBackground="@color/frag_textcolor"
+
+
+                >
+            </android.support.design.widget.BottomNavigationView>
 
 
     </android.support.design.widget.CoordinatorLayout>

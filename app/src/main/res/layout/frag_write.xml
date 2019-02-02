@@ -45,7 +45,7 @@
 
         <EditText
             android:id="@+id/et_title"
-            android:layout_width="180dp"
+            android:layout_width="350dp"
             android:layout_height="wrap_content"
             android:background="@null"
             android:hint="제목을 입력해주세요."

@@ -3,33 +3,24 @@ package com.jang.user.miniproject2.Object;
 import java.io.Serializable;
 
 public class Comment implements Serializable{
-    String writerId;
-    String text;
-    String bgUrl;
+    String writerUID;
+    String content;
     long writeTime;
 
-    public String getWriterId() {
-        return writerId;
+    public String getWriterUID() {
+        return writerUID;
     }
 
-    public void setWriterId(String writerId) {
-        this.writerId = writerId;
+    public void setWriterUID(String writerUID) {
+        this.writerUID = writerUID;
     }
 
-    public String getText() {
-        return text;
+    public String getContent() {
+        return content;
     }
 
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public String getBgUrl() {
-        return bgUrl;
-    }
-
-    public void setBgUrl(String bgUrl) {
-        this.bgUrl = bgUrl;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public long getWriteTime() {

@@ -17,6 +17,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -62,6 +64,13 @@ public class Frag_Mypage extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 user = dataSnapshot.getValue(User.class);
+                Edit_userName.setHint(user.getUser_name());
+                Edit_userName.setText(Edit_userName.getText());
+
+                Glide.with(getContext())
+                        .load(user.getUser_uri())
+                        .apply(new RequestOptions().circleCrop())
+                        .into(my_img);
 
             }
 
@@ -95,6 +104,9 @@ public class Frag_Mypage extends Fragment {
                 Map<String, Object> childUpdates = new HashMap<>();
                 childUpdates.put("/user_name",Edit_userName.getText().toString());
                 FirebaseDatabase.getInstance().getReference().child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).updateChildren(childUpdates);
+                Edit_userName.setHint(Edit_userName.getText());
+
+
             }
         });
 

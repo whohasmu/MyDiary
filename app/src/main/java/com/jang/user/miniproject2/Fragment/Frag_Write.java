@@ -72,7 +72,7 @@ public class Frag_Write extends Fragment {
 
     String ImageUri;
 
-    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
     Uri downloadUri;
     ProgressDialog asyncDialog;
     LottieAnimationView Lottie_Write;
@@ -86,22 +86,15 @@ public class Frag_Write extends Fragment {
 
         Firebase.setAndroidContext(inflater.getContext());
 
-        if (ContextCompat.checkSelfPermission(inflater.getContext(),
-                android.Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
 
+        if (ContextCompat.checkSelfPermission(inflater.getContext(),android.Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
                     android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
-
             } else {
-
-                ActivityCompat.requestPermissions(getActivity(),
-                        new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE},
-                        2);
-
-
+                ActivityCompat.requestPermissions(getActivity(),new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE},2);
             }
         }
+
 
 
 
@@ -125,6 +118,7 @@ public class Frag_Write extends Fragment {
         Button_LoadImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(i, 1);
             }
@@ -133,9 +127,11 @@ public class Frag_Write extends Fragment {
         Image_GetImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(i, 1);
             }
+
         });
 
 
@@ -204,7 +200,6 @@ public class Frag_Write extends Fragment {
                                 post.setContent(Edit_Content.getText().toString());
                                 post.setImageUrl(downloadUri.toString());
                                 post.setWriterUID(user.getUid());
-                                post.setWriterName(user.getDisplayName());
 
                                 post.setWriteTime(System.currentTimeMillis());
 
@@ -213,7 +208,9 @@ public class Frag_Write extends Fragment {
 
                                 /*getActivity().getFragmentManager().beginTransaction().replace(R.id.Frame_Main,new Frag_Home()).commit();*/
 
-                                Toast.makeText(getContext(), "일기 작성이 완료되었습니다.", LENGTH_LONG).show();
+                                /*if(getContext().getResources()!=null){
+                                    Toast.makeText(getContext(), "일기 작성이 완료되었습니다.", LENGTH_LONG).show();
+                                }*/
 
                                 asyncDialog.dismiss();
                                 Lottie_Write.setVisibility(View.VISIBLE);
@@ -227,6 +224,7 @@ public class Frag_Write extends Fragment {
                                     public void onAnimationEnd(Animator animation) {
                                         Lottie_Write.cancelAnimation();
                                         Lottie_Write.setVisibility(GONE);
+
                                     }
 
                                     @Override
@@ -246,7 +244,7 @@ public class Frag_Write extends Fragment {
                             } else {
                                 // Handle failures
                                 Log.d("로그", "이미지 링크 받아오기 실패...");
-                                Toast.makeText(getContext(), "이미지 링크 받아오기 실패...", LENGTH_LONG).show();
+                                Toast.makeText(getContext(), "업로드 실패...", LENGTH_LONG).show();
 
                                 asyncDialog.dismiss();
                                 Button_Write.setEnabled(true);
@@ -255,6 +253,8 @@ public class Frag_Write extends Fragment {
                     });
                 }else{
                     Toast.makeText(getContext(), "이미지를 추가해주세요.", Toast.LENGTH_SHORT).show();
+                    asyncDialog.dismiss();
+                    Button_Write.setEnabled(true);
                 }
 
             }//https://firebasestorage.googleapis.com/v0/b/miniproject2-4e7d3.appspot.com/o/images%2FIMG_20180918_060912.jpg?alt=media&token=32c80bf2-671c-4b47-8dee-881d8149a247

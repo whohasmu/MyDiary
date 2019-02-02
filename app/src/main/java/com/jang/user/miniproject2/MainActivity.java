@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
@@ -74,10 +75,17 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private long pressedTime=0;
+    @Override
+    public void onBackPressed() {
+        if (System.currentTimeMillis() > pressedTime + 2000) {
+            pressedTime = System.currentTimeMillis();
+            Toast.makeText(this, "한번 더 누르면 종료 됩니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }else if (System.currentTimeMillis() <= pressedTime + 2000) {
+            finish();
+        }
 
-
-
-
-
+    }
 
 }

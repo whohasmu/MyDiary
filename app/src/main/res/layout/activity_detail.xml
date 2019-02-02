@@ -38,12 +38,12 @@
 
         <Button
             android:id="@+id/Button_AddFriend"
-            android:layout_width="30dp"
+            android:layout_width="35dp"
             android:layout_height="30dp"
             android:layout_below="@id/cardImage"
             android:layout_alignParentRight="true"
             android:layout_margin="20dp"
-            android:text="추가"
+            android:background="@drawable/ic_user_add"
             android:visibility="gone"/>
 
         <LinearLayout
